@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Keranjang Belanja</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 700px;
+        margin: auto;
+        padding: 20px;
+    }
+    .product {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    button {
+        background: coral;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+    }
+    #cart {
+        margin-top: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
+    #checkout-form {
+        margin-top: 20px;
+        display: none;
+    }
+    input, select {
+        padding: 8px;
+        margin: 5px 0;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+
+<h1>Toko Sederhana</h1>
+
+<!-- Produk -->
+<div class="product">
+    <span>Baju - Rp 100.000</span>
+    <button onclick="addToCart('Baju', 100000)">Tambah ke Keranjang</button>
+</div>
+<div class="product">
+    <span>Sepatu - Rp 250.000</span>
+    <button onclick="addToCart('Sepatu', 250000)">Tambah ke Keranjang</button>
+</div>
+<div class="product">
+    <span>Tas - Rp 150.000</span>
+    <button onclick="addToCart('Tas', 150000)">Tambah ke Keranjang</button>
+</div>
+
+<!-- Keranjang -->
+<div id="cart">
+    <h2>Keranjang Belanja</h2>
+    <table id="cart-table">
+        <tr>
+            <th>Produk</th>
+            <th>Harga</th>
+            <th>Jumlah</th>
+            <th>Total</th>
+        </tr>
+    </table>
+    <h3 id="cart-total">Total: Rp 0</h3>
+    <button onclick="showCheckout()">Checkout</button>
+</div>
+
+<!-- Form Checkout -->
+<div id="checkout-form">
+    <h2>Form Checkout</h2>
+    <input type="text" placeholder="Nama Penerima" id="name">
+    <input type="text" placeholder="Alamat" id="address">
+    <input type="tel" placeholder="No. HP" id="phone">
+    <select id="payment">
+        <option value="">Pilih Metode Pembayaran</option>
+        <option>Transfer Bank</option>
+        <option>OVO</option>
+        <option>Dana</option>
+        <option>COD</option>
+    </select>
+    <button onclick="placeOrder()">Bayar Sekarang</button>
+</div>
+
+<script>
+    let cart = [];
+
+    function addToCart(name, price) {
+        let item = cart.find(p => p.name === name);
+        if (item) {
+            item.qty++;
+        } else {
+            cart.push({ name, price, qty: 1 });
+        }
+        renderCart();
+    }
+
+    function renderCart() {
+        let table = document.getElementById("cart-table");
+        table.innerHTML = `
+            <tr>
+                <th>Produk</th>
+                <th>Harga</th>
+                <th>Jumlah</th>
+                <th>Total</th>
+            </tr>`;
+        let total = 0;
+        cart.forEach(item => {
+            let subtotal = item.price * item.qty;
+            total += subtotal;
+            table.innerHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>Rp ${item.price.toLocaleString()}</td>
+                    <td>${item.qty}</td>
+                    <td>Rp ${subtotal.toLocaleString()}</td>
+                </tr>`;
+        });
+        document.getElementById("cart-total").innerText = "Total: Rp " + total.toLocaleString();
+    }
+
+    function showCheckout() {
+        if (cart.length === 0) {
+            alert("Keranjang kosong!");
+            return;
+        }
+        document.getElementById("checkout-form").style.display = "block";
+    }
+
+    function placeOrder() {
+        let name = document.getElementById("name").value;
+        let address = document.getElementById("address").value;
+        let phone = document.getElementById("phone").value;
+        let payment = document.getElementById("payment").value;
+
+        if (!name || !address || !phone || !payment) {
+            alert("Harap isi semua data!");
+            return;
+        }
+
+        alert(`Pesanan atas nama ${name} berhasil dibuat!\nMetode: ${payment}`);
+        cart = [];
+        renderCart();
+        document.getElementById("checkout-form").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
